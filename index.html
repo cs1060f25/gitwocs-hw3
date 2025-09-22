@@ -1,9 +1,369 @@
 <!DOCTYPE html>
-<html> 
-    <head>
-        <title>Hello</title>
-    </head>
-    <body>
-        Hello Wor ld!!!
-    </body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commutr - Learn on Your Commute</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-route"></i>
+                <span>Commutr</span>
+            </div>
+            <div class="nav-menu">
+                <div class="streak-counter">
+                    <i class="fas fa-fire"></i>
+                    <span id="streak-count">0</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main App Container -->
+    <div class="app-container">
+        
+        <!-- Discovery Screen -->
+        <div class="screen active" id="discover-screen">
+            <div class="hero-section">
+                <div class="hero-content">
+                    <h1>Learn Something New Every Commute</h1>
+                    <p>Bite-sized learning that fits perfectly into your daily journey. No interruptions, just growth.</p>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <span class="stat-number">5-15</span>
+                            <span class="stat-label">Minutes</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">AI</span>
+                            <span class="stat-label">Curated</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">No</span>
+                            <span class="stat-label">Mid-Ads</span>
+                        </div>
+                    </div>
+                    <button class="cta-button" onclick="startOnboarding()">
+                        <i class="fas fa-rocket"></i>
+                        Start Learning
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Onboarding Screen -->
+        <div class="screen" id="onboard-screen">
+            <div class="onboard-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="onboard-progress"></div>
+                </div>
+                
+                <div class="onboard-step active" id="step-1">
+                    <h2>Welcome to Commutr!</h2>
+                    <p>Let's set up your personalized learning experience</p>
+                    <div class="input-group">
+                        <label for="user-name">What should we call you?</label>
+                        <input type="text" id="user-name" placeholder="Enter your name" value="Michael">
+                    </div>
+                    <button class="next-button" onclick="nextStep()">Continue</button>
+                </div>
+
+                <div class="onboard-step" id="step-2">
+                    <h2>How long is your commute?</h2>
+                    <p>We'll tailor lessons to fit your available time</p>
+                    <div class="commute-options">
+                        <div class="commute-option" data-duration="10">
+                            <i class="fas fa-walking"></i>
+                            <span>5-10 min</span>
+                            <small>Quick walk</small>
+                        </div>
+                        <div class="commute-option selected" data-duration="25">
+                            <i class="fas fa-subway"></i>
+                            <span>20-30 min</span>
+                            <small>Train/Bus</small>
+                        </div>
+                        <div class="commute-option" data-duration="45">
+                            <i class="fas fa-car"></i>
+                            <span>40-50 min</span>
+                            <small>Driving</small>
+                        </div>
+                    </div>
+                    <button class="next-button" onclick="nextStep()">Continue</button>
+                </div>
+
+                <div class="onboard-step" id="step-3">
+                    <h2>What interests you?</h2>
+                    <p>Select topics you'd like to explore</p>
+                    <div class="interests-grid">
+                        <div class="interest-tag selected" data-interest="spanish">
+                            <i class="fas fa-language"></i>
+                            Spanish
+                        </div>
+                        <div class="interest-tag selected" data-interest="ai">
+                            <i class="fas fa-robot"></i>
+                            AI & Tech
+                        </div>
+                        <div class="interest-tag" data-interest="history">
+                            <i class="fas fa-landmark"></i>
+                            History
+                        </div>
+                        <div class="interest-tag" data-interest="business">
+                            <i class="fas fa-chart-line"></i>
+                            Business
+                        </div>
+                        <div class="interest-tag" data-interest="science">
+                            <i class="fas fa-flask"></i>
+                            Science
+                        </div>
+                        <div class="interest-tag" data-interest="coding">
+                            <i class="fas fa-code"></i>
+                            Programming
+                        </div>
+                    </div>
+                    <button class="next-button" onclick="completeOnboarding()">Start Learning</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Learning Screen -->
+        <div class="screen" id="learn-screen">
+            <div class="learn-container">
+                <div class="session-header">
+                    <div class="session-info">
+                        <h3 id="session-title">Morning Commute</h3>
+                        <p id="session-time">25 minutes available</p>
+                    </div>
+                    <div class="session-progress">
+                        <div class="progress-circle">
+                            <span id="progress-text">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vibe Check -->
+                <div class="vibe-section active" id="vibe-check">
+                    <h2>How are you feeling today?</h2>
+                    <p>Let's match your mood with the perfect content</p>
+                    <div class="vibe-options">
+                        <div class="vibe-option" data-vibe="focused">
+                            <i class="fas fa-brain"></i>
+                            <span>Focused</span>
+                            <small>Deep learning</small>
+                        </div>
+                        <div class="vibe-option selected" data-vibe="curious">
+                            <i class="fas fa-lightbulb"></i>
+                            <span>Curious</span>
+                            <small>Explore new topics</small>
+                        </div>
+                        <div class="vibe-option" data-vibe="chill">
+                            <i class="fas fa-leaf"></i>
+                            <span>Chill</span>
+                            <small>Light content</small>
+                        </div>
+                    </div>
+                    <button class="start-button" onclick="startLearning()">
+                        <i class="fas fa-play"></i>
+                        Generate My Session
+                    </button>
+                </div>
+
+                <!-- Content Selection -->
+                <div class="content-section" id="content-selection">
+                    <h3>AI-Curated for You</h3>
+                    <div class="content-cards">
+                        <div class="content-card recommended" data-content="spanish-basics">
+                            <div class="card-header">
+                                <i class="fas fa-language"></i>
+                                <span class="recommended-badge">Recommended</span>
+                            </div>
+                            <h4>Spanish Essentials</h4>
+                            <p>Continue your Spanish journey with travel phrases</p>
+                            <div class="card-meta">
+                                <span><i class="fas fa-clock"></i> 20 min</span>
+                                <span><i class="fas fa-star"></i> Beginner</span>
+                            </div>
+                        </div>
+                        
+                        <div class="content-card" data-content="ai-research">
+                            <div class="card-header">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <h4>AI Breakthroughs 2024</h4>
+                            <p>Latest developments in machine learning</p>
+                            <div class="card-meta">
+                                <span><i class="fas fa-clock"></i> 15 min</span>
+                                <span><i class="fas fa-star"></i> Intermediate</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="select-button" onclick="selectContent()">Start This Session</button>
+                </div>
+
+                <!-- Active Learning -->
+                <div class="lesson-section" id="active-lesson">
+                    <div class="lesson-header">
+                        <h3 id="lesson-title">Spanish Travel Phrases</h3>
+                        <div class="lesson-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="lesson-progress"></div>
+                            </div>
+                            <span id="lesson-time">18:30 remaining</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-content">
+                        <div class="content-chunk active" id="chunk-1">
+                            <h4>Essential Airport Vocabulary</h4>
+                            <div class="vocab-list">
+                                <div class="vocab-item">
+                                    <span class="spanish">El aeropuerto</span>
+                                    <span class="english">The airport</span>
+                                    <button class="play-audio"><i class="fas fa-volume-up"></i></button>
+                                </div>
+                                <div class="vocab-item">
+                                    <span class="spanish">La puerta de embarque</span>
+                                    <span class="english">The boarding gate</span>
+                                    <button class="play-audio"><i class="fas fa-volume-up"></i></button>
+                                </div>
+                                <div class="vocab-item">
+                                    <span class="spanish">El equipaje</span>
+                                    <span class="english">The luggage</span>
+                                    <button class="play-audio"><i class="fas fa-volume-up"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-controls">
+                        <button class="control-button" onclick="previousChunk()">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="control-button primary" onclick="nextChunk()">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Engagement Screen (Post-lesson) -->
+        <div class="screen" id="engage-screen">
+            <div class="engage-container">
+                <div class="completion-celebration">
+                    <div class="celebration-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h2>Great job, Michael!</h2>
+                    <p>You've completed your Spanish session</p>
+                </div>
+
+                <!-- Ad Section for Free Users -->
+                <div class="ad-section">
+                    <div class="ad-header">
+                        <span>Advertisement</span>
+                        <div class="ad-timer">
+                            <i class="fas fa-clock"></i>
+                            <span id="ad-countdown">15</span>s
+                        </div>
+                    </div>
+                    <div class="ad-content">
+                        <div class="ad-placeholder">
+                            <i class="fas fa-ad"></i>
+                            <h4>Duolingo Plus</h4>
+                            <p>Learn Spanish faster with unlimited hearts and offline lessons</p>
+                            <button class="ad-cta">Try Free for 7 Days</button>
+                        </div>
+                    </div>
+                    <button class="skip-ad" id="skip-button" onclick="completeSession()" disabled>
+                        Skip Ad (<span id="skip-countdown">15</span>)
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reflection Screen -->
+        <div class="screen" id="reflect-screen">
+            <div class="reflect-container">
+                <div class="streak-update">
+                    <div class="streak-icon">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <h2>Streak Updated!</h2>
+                    <div class="streak-counter-large">
+                        <span id="current-streak">3</span>
+                        <small>day streak</small>
+                    </div>
+                </div>
+
+                <div class="mastery-board">
+                    <h3>Your Mastery Board</h3>
+                    <div class="mastery-items">
+                        <div class="mastery-item">
+                            <div class="mastery-icon">
+                                <i class="fas fa-language"></i>
+                            </div>
+                            <div class="mastery-info">
+                                <h4>Spanish</h4>
+                                <div class="mastery-level">
+                                    <span class="level-badge beginner">Beginner</span>
+                                    <div class="level-progress">
+                                        <div class="level-fill" style="width: 65%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mastery-item">
+                            <div class="mastery-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="mastery-info">
+                                <h4>AI & Technology</h4>
+                                <div class="mastery-level">
+                                    <span class="level-badge beginner">Beginner</span>
+                                    <div class="level-progress">
+                                        <div class="level-fill" style="width: 30%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="session-summary">
+                    <h3>Today's Achievement</h3>
+                    <div class="achievement-stats">
+                        <div class="stat-item">
+                            <i class="fas fa-clock"></i>
+                            <span>20 min learned</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-brain"></i>
+                            <span>12 new words</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-target"></i>
+                            <span>85% accuracy</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="next-session">
+                    <h4>Ready for your next commute?</h4>
+                    <button class="next-session-button" onclick="resetToDiscover()">
+                        <i class="fas fa-route"></i>
+                        Plan Next Session
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
 </html>
