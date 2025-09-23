@@ -270,6 +270,13 @@ class LearningManager {
     }
 
     setupEventListeners() {
+        // Audio buttons
+        document.querySelectorAll('.play-audio').forEach(button => {
+            button.addEventListener('click', () => {
+                alert('Audio playback feature has not been implemented yet. This is a prototype demonstration.');
+            });
+        });
+
         // Vibe options
         document.querySelectorAll('.vibe-option').forEach(option => {
             option.addEventListener('click', () => this.selectVibe(option));

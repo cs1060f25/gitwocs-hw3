@@ -236,6 +236,14 @@ function goToEditProfile() {
     if (app) app.dashboard.goToEditProfile();
 }
 
+function forgotPassword() {
+    if (app) app.auth.forgotPassword();
+}
+
+function resendConfirmation() {
+    if (app) app.auth.resendConfirmation();
+}
+
 function switchAuthTab(which) {
     document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('active'));

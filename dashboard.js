@@ -130,10 +130,6 @@ class DashboardManager {
     }
 
     goToEditProfile() {
-        this.app.onboardingStep = 2;
-        document.querySelectorAll('.onboard-step').forEach(s => s.classList.remove('active'));
-        document.getElementById('step-2').classList.add('active');
-        this.app.showScreen('onboard-screen');
-        this.app.updateOnboardingProgress();
+        alert('Edit Profile feature has not been implemented yet. This is a prototype demonstration.');
     }
 }

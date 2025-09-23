@@ -4,6 +4,14 @@ class AuthManager {
         this.app = app;
     }
 
+    resendConfirmation() {
+        alert('Email confirmation feature has not been implemented yet. This is a prototype demonstration.');
+    }
+
+    forgotPassword() {
+        alert('Password reset feature has not been implemented yet. This is a prototype demonstration.');
+    }
+
     async signUp(name, email, password) {
         console.log('SignUp called with:', { name, email, password });
         
