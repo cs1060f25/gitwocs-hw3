@@ -24,6 +24,8 @@ class CommutrApp {
         // Initialize modules
         this.auth = new AuthManager(this);
         this.dashboard = new DashboardManager(this);
+        this.onboarding = new OnboardingManager(this);
+        this.learning = new LearningManager(this);
         
         // Lesson definitions
         this.lessonDefinitions = {
@@ -87,6 +89,10 @@ class CommutrApp {
                 this.resetToDiscover();
             });
         }
+
+        // Setup module event listeners
+        this.onboarding.setupEventListeners();
+        this.learning.setupEventListeners();
     }
 
     showScreen(screenId) {
@@ -235,4 +241,34 @@ function switchAuthTab(which) {
     document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('active'));
     document.querySelector(`.auth-tab[data-tab="${which}"]`).classList.add('active');
     document.getElementById(`${which}-panel`).classList.add('active');
+}
+
+// Onboarding functions
+function nextStep() {
+    if (app) app.onboarding.nextStep();
+}
+
+function completeOnboarding() {
+    if (app) app.onboarding.completeOnboarding();
+}
+
+// Learning functions
+function startLearning() {
+    if (app) app.learning.startLearning();
+}
+
+function selectContent() {
+    if (app) app.learning.selectContent();
+}
+
+function nextChunk() {
+    if (app) app.learning.nextChunk();
+}
+
+function previousChunk() {
+    if (app) app.learning.previousChunk();
+}
+
+function completeSession() {
+    if (app) app.learning.completeSession();
 }
