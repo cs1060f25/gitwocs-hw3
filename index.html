@@ -7,12 +7,19 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Supabase JS CDN -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+    <!-- Supabase Config: using your project credentials -->
+    <script>
+      window.SUPABASE_URL = 'https://suadscvxcjrgzbgwhvin.supabase.co';
+      window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN1YWRzY3Z4Y2pyZ3piZ3dodmluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1ODIwNDAsImV4cCI6MjA3NDE1ODA0MH0.Cenedrz98R3BJ-Yja_m4XuJFL9M8iejNK-Tac8TebJA';
+    </script>
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
-            <div class="nav-logo">
+            <div class="nav-logo" onclick="resetToDiscover()" style="cursor:pointer;">
                 <i class="fas fa-route"></i>
                 <span>Commutr</span>
             </div>
@@ -21,6 +28,13 @@
                     <i class="fas fa-fire"></i>
                     <span id="streak-count">0</span>
                 </div>
+                <div class="user-chip" id="user-chip" style="display:none;">
+                    <i class="fas fa-user"></i>
+                    <span id="user-name-display">Guest</span>
+                    <button class="signout-btn" onclick="signOut()" title="Sign out">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </nav>
@@ -28,6 +42,81 @@
     <!-- Main App Container -->
     <div class="app-container">
         
+        <!-- Dashboard Screen (signed-in view) -->
+        <div class="screen" id="dashboard-screen">
+            <div class="dashboard-container">
+                <section class="welcome-strip">
+                    <div class="welcome-left">
+                        <h2>Welcome back, <span id="dash-first-name">Learner</span></h2>
+                        <p>Keep the streak alive and learn something new on your next ride.</p>
+                    </div>
+                    <div class="streak-pill">
+                        <i class="fas fa-fire"></i>
+                        <div class="streak-num"><span id="dash-streak">0</span></div>
+                        <small>day streak</small>
+                    </div>
+                </section>
+
+                <section class="quick-actions">
+                    <button class="next-session-button" onclick="startQuickSession()">
+                        <i class="fas fa-play"></i>
+                        Quick Start (fit to commute)
+                    </button>
+                    <button class="next-session-button ghost" onclick="ctaStart()">
+                        <i class="fas fa-sliders-h"></i>
+                        Plan New Session
+                    </button>
+                    <button class="next-session-button ghost" onclick="goToEditProfile()">
+                        <i class="fas fa-user-cog"></i>
+                        Edit Profile
+                    </button>
+                </section>
+
+                <section class="resume-section">
+                    <h3>Resume</h3>
+                    <div class="resume-card" id="resume-card">
+                        <div class="resume-icon"><i class="fas fa-rotate-right"></i></div>
+                        <div class="resume-info">
+                            <h4 id="resume-title">No recent session</h4>
+                            <small id="resume-sub">Pick a topic to get started</small>
+                        </div>
+                        <button class="next-session-button small" onclick="resumeLast()">Continue</button>
+                    </div>
+                </section>
+
+                <section class="goals-section">
+                    <h3>Your Weekly Goal</h3>
+                    <div class="goals-row">
+                        <div class="goal-ring">
+                            <div class="goal-inner">
+                                <span id="goal-percent">0%</span>
+                            </div>
+                        </div>
+                        <div class="goal-info">
+                            <p><strong>Minutes this week:</strong> <span id="goal-minutes">0</span>/<span id="goal-target">60</span></p>
+                            <button class="next-session-button small" onclick="startQuickSession()"><i class="fas fa-play"></i> Add 5–10 min now</button>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="freeze-banner" id="freeze-banner" style="display:none;">
+                    <i class="fas fa-snowflake"></i>
+                    <div class="freeze-text">
+                        <strong>Don’t lose your streak!</strong>
+                        <small>It’s been a while since your last session. Do a quick 5–10 minutes.</small>
+                    </div>
+                    <button class="next-session-button small" onclick="startQuickSession()">Quick 5 min</button>
+                </section>
+
+                <section class="suggested-section">
+                    <h3>Suggested for you</h3>
+                    <div class="content-cards" id="dash-suggestions">
+                        <!-- filled dynamically from interests -->
+                    </div>
+                </section>
+            </div>
+        </div>
+
         <!-- Discovery Screen -->
         <div class="screen active" id="discover-screen">
             <div class="hero-section">
@@ -48,10 +137,55 @@
                             <span class="stat-label">Mid-Ads</span>
                         </div>
                     </div>
-                    <button class="cta-button" onclick="startOnboarding()">
+                    <button class="cta-button" id="start-learning-btn" onclick="document.getElementById('discover-screen').classList.remove('active'); document.getElementById('auth-screen').classList.add('active');">
                         <i class="fas fa-rocket"></i>
                         Start Learning
                     </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Auth Screen -->
+        <div class="screen" id="auth-screen">
+            <div class="auth-container">
+                <div class="auth-tabs">
+                    <button class="auth-tab active" data-tab="signup" onclick="switchAuthTab('signup')">Sign Up</button>
+                    <button class="auth-tab" data-tab="signin" onclick="switchAuthTab('signin')">Sign In</button>
+                </div>
+                
+                <div class="auth-panel active" id="signup-panel">
+                    <div class="input-group">
+                        <label for="signup-name">Name</label>
+                        <input id="signup-name" type="text" placeholder="Your name">
+                    </div>
+                    <div class="input-group">
+                        <label for="signup-email">Email</label>
+                        <input id="signup-email" type="email" placeholder="you@example.com">
+                    </div>
+                    <div class="input-group">
+                        <label for="signup-password">Password</label>
+                        <input id="signup-password" type="password" placeholder="Create a password">
+                    </div>
+                    <div class="form-error" id="signup-error" aria-live="polite"></div>
+                    <button class="next-button" id="signup-submit" onclick="signUp()">Create Account</button>
+                    <small class="auth-hint">By signing up, you agree to our terms.</small>
+                </div>
+
+                <div class="auth-panel" id="signin-panel">
+                    <div class="input-group">
+                        <label for="signin-email">Email</label>
+                        <input id="signin-email" type="email" placeholder="you@example.com">
+                    </div>
+                    <div class="input-group">
+                        <label for="signin-password">Password</label>
+                        <input id="signin-password" type="password" placeholder="Your password">
+                    </div>
+                    <div class="form-error" id="signin-error" aria-live="polite"></div>
+                    <button class="next-button" id="signin-submit" onclick="signIn()">Sign In</button>
+                    <div class="auth-actions">
+                        <button class="link-button" onclick="forgotPassword()">Forgot password?</button>
+                        <button class="link-button" id="resend-confirm-btn" onclick="resendConfirmation()">Resend confirmation email</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -68,7 +202,7 @@
                     <p>Let's set up your personalized learning experience</p>
                     <div class="input-group">
                         <label for="user-name">What should we call you?</label>
-                        <input type="text" id="user-name" placeholder="Enter your name" value="Michael">
+                        <input type="text" id="user-name" placeholder="Enter your name">
                     </div>
                     <button class="next-button" onclick="nextStep()">Continue</button>
                 </div>
@@ -100,11 +234,11 @@
                     <h2>What interests you?</h2>
                     <p>Select topics you'd like to explore</p>
                     <div class="interests-grid">
-                        <div class="interest-tag selected" data-interest="spanish">
+                        <div class="interest-tag" data-interest="spanish">
                             <i class="fas fa-language"></i>
                             Spanish
                         </div>
-                        <div class="interest-tag selected" data-interest="ai">
+                        <div class="interest-tag" data-interest="ai">
                             <i class="fas fa-robot"></i>
                             AI & Tech
                         </div>
@@ -125,6 +259,7 @@
                             Programming
                         </div>
                     </div>
+                    <div class="form-error" id="interests-error" aria-live="polite"></div>
                     <button class="next-button" onclick="completeOnboarding()">Start Learning</button>
                 </div>
             </div>
@@ -258,8 +393,8 @@
                     <div class="celebration-icon">
                         <i class="fas fa-trophy"></i>
                     </div>
-                    <h2>Great job, Michael!</h2>
-                    <p>You've completed your Spanish session</p>
+                    <h2>Great job, <span id="user-first-name">Learner</span>!</h2>
+                    <p id="completion-subtitle">You've completed your session</p>
                 </div>
 
                 <!-- Ad Section for Free Users -->
@@ -302,36 +437,8 @@
 
                 <div class="mastery-board">
                     <h3>Your Mastery Board</h3>
-                    <div class="mastery-items">
-                        <div class="mastery-item">
-                            <div class="mastery-icon">
-                                <i class="fas fa-language"></i>
-                            </div>
-                            <div class="mastery-info">
-                                <h4>Spanish</h4>
-                                <div class="mastery-level">
-                                    <span class="level-badge beginner">Beginner</span>
-                                    <div class="level-progress">
-                                        <div class="level-fill" style="width: 65%"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="mastery-item">
-                            <div class="mastery-icon">
-                                <i class="fas fa-robot"></i>
-                            </div>
-                            <div class="mastery-info">
-                                <h4>AI & Technology</h4>
-                                <div class="mastery-level">
-                                    <span class="level-badge beginner">Beginner</span>
-                                    <div class="level-progress">
-                                        <div class="level-fill" style="width: 30%"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="mastery-items" id="mastery-items">
+                        <!-- Filled dynamically based on your interests -->
                     </div>
                 </div>
 
@@ -364,6 +471,36 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Minimal fallbacks so primary CTAs work even if main script fails to load -->
+    <script>
+      (function(){
+        function show(id){
+          var target = document.getElementById(id);
+          if (!target) return;
+          document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+          target.classList.add('active');
+        }
+        window.ctaStart = window.ctaStart || function(){
+          // Logged-out fallback: go to auth screen
+          show('auth-screen');
+        };
+        window.resetToDiscover = window.resetToDiscover || function(){
+          // Fallback: go to discover screen
+          show('discover-screen');
+        };
+
+        function routeHash(){
+          var h = (location.hash || '').toLowerCase();
+          if (h === '#auth') return show('auth-screen');
+          if (h === '#discover' || h === '#home' || h === '') return show('discover-screen');
+        }
+        window.addEventListener('hashchange', routeHash);
+        routeHash();
+      })();
+    </script>
+    <!-- Load modules in order -->
+    <script src="auth.js"></script>
+    <script src="dashboard.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
