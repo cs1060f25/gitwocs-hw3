@@ -4,6 +4,8 @@ Github username: GITWOCS
 url to deployed version: https://gitwocs-hw3-git-main-gitwocs-projects.vercel.app/
 url to team prd: https://drive.google.com/file/d/1S5n09aJyFcShzyrGc37wM3ZvgPwSUIjZ/view?usp=drivesdk
 
+for login, can use email: salammoumie1@gmail.com and password: Google1234!
+
 
 
 # Commutr - Micro-Learning for Your Commute
